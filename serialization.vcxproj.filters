@@ -28,8 +28,6 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="data.bin">
-      <Filter>Resource Files</Filter>
-    </None>
+    <None Include=".gitignore" />
   </ItemGroup>
 </Project>
