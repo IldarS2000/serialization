@@ -1,5 +1,6 @@
 #include <iostream>
 #include <fstream>
+#include <sstream>
 
 #include <vector>
 #include <string>
@@ -7,6 +8,7 @@
 #include <algorithm>
 
 #include <cassert>
+#include <exception>
 
 #include "oarchstream.h"
 #include "iarchstream.h"
@@ -15,80 +17,92 @@
 template<class T>
 std::ostream& operator<<(std::ostream& out, std::vector<T> vec)
 {
-  std::copy(vec.begin(), vec.end(), std::ostream_iterator<T>(std::cout, " "));
+  std::copy(vec.begin(), vec.end(), std::ostream_iterator<T>(out));
   return out;
 }
 
 template<class T>
 std::ostream& operator<<(std::ostream& out, std::list<T> vec)
 {
-  std::copy(vec.begin(), vec.end(), std::ostream_iterator<T>(std::cout, " "));
+  std::copy(vec.begin(), vec.end(), std::ostream_iterator<T>(out));
   return out;
 }
 
+template<typename T>
+void assertEqual(const T& actual, const T& expected, const char* filename, unsigned line, const char* type)
+{
+  if (actual != expected) {
+    std::ostringstream message;
+    message << "Not equal error occured.\n";
+    message << "Expected: <" << expected << ">\n";
+    message << "Actual:   <" << actual << ">\n";
+    message << "file: " << filename << '\n';
+    message << "line: " << line << '\n';
+    std::string str = message.str();
+
+    throw std::exception(str.c_str());
+  }
+  else {
+    std::cout << type << ": ok\n";
+  }
+}
+#define ASSERT_EQUAL(actual, expected, type) assertEqual(actual, expected, __FILE__, __LINE__, type)
 
 void tests()
 {
   {
-    std::vector<int> expectation = { 1, 2, 3, 4, 5 };
-
+    std::vector<int> expected = { 1, 2, 3, 4, 5 };
     {
       std::ofstream out("data.bin", std::ios::binary);
       archive::oarchstream stream(out);
-      stream << expectation;
+      stream << expected;
     }
 
-    std::vector<int> reality;
+    std::vector<int> actual;
     {
       std::ifstream in("data.bin", std::ios::binary);
       archive::iarchstream stream(in);
-      stream >> reality;
+      stream >> actual;
     }
 
-    assert(expectation == reality);
-    std::cout << "vector<int> ok\n";
+    ASSERT_EQUAL(actual, expected, "vector<int>");
   }
 
   {
-    std::list<int> expectation = { 1, 2, 3, 4, 5 };
-
+    std::list<int> expected = { 1, 2, 3, 4, 5 };
     {
       std::ofstream out("data.bin", std::ios::binary);
       archive::oarchstream stream(out);
-      stream << expectation;
+      stream << expected;
     }
 
-    std::list<int> reality;
+    std::list<int> actual;
     {
       std::ifstream in("data.bin", std::ios::binary);
       archive::iarchstream stream(in);
-      stream >> reality;
+      stream >> actual;
     }
 
-    assert(expectation == reality);
-    std::cout << "list<int> ok\n";
+    ASSERT_EQUAL(actual, expected, "list<int>");
   }
 
   {
-    std::string expectation = "hello world!";
-
+    std::string expected = "hello world!";
     {
       std::ofstream out("data.bin", std::ios::binary);
       archive::oarchstream stream(out);
-      stream << expectation;
+      stream << expected;
     }
 
-    std::string reality;
+    std::string actual;
     {
       std::ifstream in("data.bin", std::ios::binary);
       archive::iarchstream stream(in);
-      stream >> reality;
+      stream >> actual;
     }
 
-    assert(expectation == reality);
-    std::cout << "string ok\n";
+    ASSERT_EQUAL(actual, expected, "string");
   }
-
 
   std::cout << "-------------\n";
   std::cout << "all tests ok!\n";
@@ -97,7 +111,13 @@ void tests()
 
 int main()
 {
-  tests();
+  try {
+    tests();
+  }
+  catch (std::exception& e) {
+    system("cls");
+    std::cout << e.what() << '\n';
+  }
 
   return 0;
 }
