@@ -1,6 +1,6 @@
 # serialization
 
-I am creating here serializer which can serialize user type elements, all stl containers with fundamental type elements and user type elements.
+I am creating here serializer which can serialize user type elements, all stl containers with fundamental and user types of element.
 
 ## which objects serializer can archive and unarchive at this moment
 
