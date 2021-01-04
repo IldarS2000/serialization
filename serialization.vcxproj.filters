@@ -18,19 +18,18 @@
     <ClCompile Include="test.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="bin_iarchive.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="bin_oarchive.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="bin_iarchive.h">
+    <ClInclude Include="iarchstream.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="bin_oarchive.h">
+    <ClInclude Include="oarchstream.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="data.bin">
+      <Filter>Resource Files</Filter>
+    </None>
   </ItemGroup>
 </Project>
