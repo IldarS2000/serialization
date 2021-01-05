@@ -28,8 +28,8 @@ std::ostream& operator<<(std::ostream& out, std::list<T> vec)
   return out;
 }
 
-template<typename T>
-void assertEqual(const T& actual, const T& expected, const char* filename, unsigned line, const char* type)
+template<class T>
+void assertEqual(const T& actual, const T& expected, const char* filename, unsigned line, const char* typeName)
 {
   if (actual != expected) {
     std::ostringstream message;
@@ -43,66 +43,43 @@ void assertEqual(const T& actual, const T& expected, const char* filename, unsig
     throw std::exception(str.c_str());
   }
   else {
-    std::cout << type << ": ok\n";
+    std::cout << typeName << ": ok\n";
   }
 }
 #define ASSERT_EQUAL(actual, expected, type) assertEqual(actual, expected, __FILE__, __LINE__, type)
 
-void tests()
+template<class T>
+void testObject(const T& value, const char* typeName)
 {
   {
-    std::vector<int> expected = { 1, 2, 3, 4, 5 };
+    T expected = value;
     {
       std::ofstream out("data.bin", std::ios::binary);
       archive::oarchstream stream(out);
       stream << expected;
     }
 
-    std::vector<int> actual;
+    T actual;
     {
       std::ifstream in("data.bin", std::ios::binary);
       archive::iarchstream stream(in);
       stream >> actual;
     }
 
-    ASSERT_EQUAL(actual, expected, "vector<int>");
+    ASSERT_EQUAL(actual, expected, typeName);
   }
+}
 
-  {
-    std::list<int> expected = { 1, 2, 3, 4, 5 };
-    {
-      std::ofstream out("data.bin", std::ios::binary);
-      archive::oarchstream stream(out);
-      stream << expected;
-    }
+void tests()
+{
+  testObject(69420, "int");
+  testObject(3.14, "double");
+  testObject('x', "char");
+  testObject(true, "bool");
 
-    std::list<int> actual;
-    {
-      std::ifstream in("data.bin", std::ios::binary);
-      archive::iarchstream stream(in);
-      stream >> actual;
-    }
-
-    ASSERT_EQUAL(actual, expected, "list<int>");
-  }
-
-  {
-    std::string expected = "hello world!";
-    {
-      std::ofstream out("data.bin", std::ios::binary);
-      archive::oarchstream stream(out);
-      stream << expected;
-    }
-
-    std::string actual;
-    {
-      std::ifstream in("data.bin", std::ios::binary);
-      archive::iarchstream stream(in);
-      stream >> actual;
-    }
-
-    ASSERT_EQUAL(actual, expected, "string");
-  }
+  testObject(std::vector<int>{ 1, 2, 3, 4, 5 }, "vector<int>");
+  testObject(std::list<int>{ 1, 2, 3, 4, 5 }, "list<int>");
+  testObject(std::string{ "hello world!" }, "string");
 
   std::cout << "-------------\n";
   std::cout << "all tests ok!\n";
@@ -114,7 +91,7 @@ int main()
   try {
     tests();
   }
-  catch (std::exception& e) {
+  catch (const std::exception& e) {
     system("cls");
     std::cout << e.what() << '\n';
   }
