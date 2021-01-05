@@ -87,7 +87,8 @@ namespace archive
     }
 
     // string
-    void operator>>(std::string& container)
+    template<class T>
+    void operator>>(std::basic_string<T>& container)
     {
       size_t size = readSize(container);
       container.reserve(size);

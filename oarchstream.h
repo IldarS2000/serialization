@@ -102,7 +102,8 @@ namespace archive
     }
 
     // string
-    void operator<<(const std::string& container)
+    template<class T>
+    void operator<<(const std::basic_string<T>& container)
     {
       writeContainer(container);
     }
