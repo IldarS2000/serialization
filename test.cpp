@@ -41,27 +41,6 @@ std::ostream& operator<<(std::ostream& out, std::forward_list<T> container)
 }
 
 template<class T>
-std::ostream& operator<<(std::ostream& out, std::stack<T> container)
-{
-  std::copy(container.begin(), container.end(), std::ostream_iterator<T>(out));
-  return out;
-}
-
-template<class T>
-std::ostream& operator<<(std::ostream& out, std::queue<T> container)
-{
-  std::copy(container.begin(), container.end(), std::ostream_iterator<T>(out));
-  return out;
-}
-
-template<class T>
-std::ostream& operator<<(std::ostream& out, std::priority_queue<T> container)
-{
-  std::copy(container.begin(), container.end(), std::ostream_iterator<T>(out));
-  return out;
-}
-
-template<class T>
 void assertEqual(const T& actual, const T& expected, const char* filename, unsigned line, const char* typeName)
 {
   if (actual != expected) {
