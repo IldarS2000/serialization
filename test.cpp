@@ -2,9 +2,7 @@
 #include <fstream>
 #include <sstream>
 
-#include <vector>
-#include <string>
-#include <list>
+#include "containers.h"
 #include <algorithm>
 
 #include <cassert>
@@ -15,16 +13,51 @@
 
 
 template<class T>
-std::ostream& operator<<(std::ostream& out, std::vector<T> vec)
+std::ostream& operator<<(std::ostream& out, std::vector<T> container)
 {
-  std::copy(vec.begin(), vec.end(), std::ostream_iterator<T>(out));
+  std::copy(container.begin(), container.end(), std::ostream_iterator<T>(out));
   return out;
 }
 
 template<class T>
-std::ostream& operator<<(std::ostream& out, std::list<T> vec)
+std::ostream& operator<<(std::ostream& out, std::list<T> container)
 {
-  std::copy(vec.begin(), vec.end(), std::ostream_iterator<T>(out));
+  std::copy(container.begin(), container.end(), std::ostream_iterator<T>(out));
+  return out;
+}
+
+template<class T>
+std::ostream& operator<<(std::ostream& out, std::deque<T> container)
+{
+  std::copy(container.begin(), container.end(), std::ostream_iterator<T>(out));
+  return out;
+}
+
+template<class T>
+std::ostream& operator<<(std::ostream& out, std::forward_list<T> container)
+{
+  std::copy(container.begin(), container.end(), std::ostream_iterator<T>(out));
+  return out;
+}
+
+template<class T>
+std::ostream& operator<<(std::ostream& out, std::stack<T> container)
+{
+  std::copy(container.begin(), container.end(), std::ostream_iterator<T>(out));
+  return out;
+}
+
+template<class T>
+std::ostream& operator<<(std::ostream& out, std::queue<T> container)
+{
+  std::copy(container.begin(), container.end(), std::ostream_iterator<T>(out));
+  return out;
+}
+
+template<class T>
+std::ostream& operator<<(std::ostream& out, std::priority_queue<T> container)
+{
+  std::copy(container.begin(), container.end(), std::ostream_iterator<T>(out));
   return out;
 }
 
@@ -34,6 +67,7 @@ void assertEqual(const T& actual, const T& expected, const char* filename, unsig
   if (actual != expected) {
     std::ostringstream message;
     message << "Not equal error occured.\n";
+    message << "type: " << typeName << '\n';
     message << "Expected: <" << expected << ">\n";
     message << "Actual:   <" << actual << ">\n";
     message << "file: " << filename << '\n';
@@ -79,6 +113,8 @@ void tests()
 
   testObject(std::vector<int>{ 1, 2, 3, 4, 5 }, "vector<int>");
   testObject(std::list<int>{ 1, 2, 3, 4, 5 }, "list<int>");
+  testObject(std::deque<int>{ 1, 2, 3, 4, 5 }, "deque<int>");
+  testObject(std::forward_list<int>{ 1, 2, 3, 4, 5 }, "forward_list<int>");
   testObject(std::string{ "hello world!" }, "string");
 
   std::cout << "-------------\n";

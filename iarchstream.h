@@ -5,9 +5,7 @@
 #include <iostream>
 #include <fstream>
 
-#include <vector>
-#include <string>
-#include <list>
+#include "containers.h"
 
 #include <algorithm>
 #include <iterator>
@@ -25,18 +23,25 @@ namespace archive
     iarchstream(std::ifstream& stream) : stream(stream) {}
 
     template <class T>
-    size_t read_size(const T& container)
+    size_t readSize(const T& container)
     {
       size_t size;
       stream.read((char*)&size, sizeof(size));
       return size;
     }
 
+    // fundamental or user type
+    template <class T>
+    void operator>>(T& object)
+    {
+      stream.read((char*)&object, sizeof(object));
+    }
+
     // vector
     template <class T>
     void operator>>(std::vector<T>& container)
     {
-      size_t size = read_size(container);
+      size_t size = readSize(container);
       container.reserve(size);
 
       T element;
@@ -50,7 +55,7 @@ namespace archive
     template <class T>
     void operator>>(std::list<T>& container)
     {
-      size_t size = read_size(container);
+      size_t size = readSize(container);
 
       T element;
       for (size_t i = 0; i < size; ++i) {
@@ -59,10 +64,32 @@ namespace archive
       }
     }
 
+    // deque
+    template <class T>
+    void operator>>(std::deque<T>& container)
+    {
+      size_t size = readSize(container);
+
+      T element;
+      for (size_t i = 0; i < size; ++i) {
+        stream.read((char*)&element, sizeof(element));
+        container.emplace_back(std::move(element));
+      }
+    }
+
+    // forward_list
+    template <class T>
+    void operator>>(std::forward_list<T>& container)
+    {
+      std::vector<T> temp;
+      *this >> temp;
+      std::copy(temp.rbegin(), temp.rend(), std::front_inserter(container));
+    }
+
     // string
     void operator>>(std::string& container)
     {
-      size_t size = read_size(container);
+      size_t size = readSize(container);
       container.reserve(size);
 
       char element;

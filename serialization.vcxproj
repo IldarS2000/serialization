@@ -145,6 +145,7 @@
   <ItemGroup>
     <ClInclude Include="iarchstream.h" />
     <ClInclude Include="oarchstream.h" />
+    <ClInclude Include="containers.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include=".gitignore" />
